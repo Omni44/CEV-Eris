@@ -6,7 +6,6 @@ var/global/obj/machinery/power/eotp/eotp
 #define ALERT "Antag Alert"
 #define INSPIRATION "Inspiration"
 #define ODDITY "Oddity"
-#define STAT_BUFF "Stat Buff"
 #define MATERIAL_REWARD "Materials"
 
 
@@ -24,7 +23,7 @@ var/global/obj/machinery/power/eotp/eotp
 	idle_power_usage = 30
 	active_power_usage = 2500
 
-	var/list/rewards = list(ARMAMENTS, ALERT, INSPIRATION, ODDITY, STAT_BUFF, MATERIAL_REWARD)
+	var/list/rewards = list(ARMAMENTS, ALERT, INSPIRATION, ODDITY, MATERIAL_REWARD)
 
 	var/list/materials = list(/obj/item/stack/material/gold = 60,
 							/obj/item/stack/material/uranium = 30,
@@ -43,7 +42,6 @@ var/global/obj/machinery/power/eotp/eotp
 	var/observation = 0
 	var/min_observation = -100
 
-	var/stat_buff_power = 10
 
 	var/power_cooldown = 1 MINUTES
 	var/last_power_update = 0
@@ -53,6 +51,7 @@ var/global/obj/machinery/power/eotp/eotp
 /obj/machinery/power/eotp/New()
 	..()
 	eotp = src
+	disk_reward_update()
 
 /obj/machinery/power/eotp/examine(user)
 	..()
@@ -177,14 +176,6 @@ var/global/obj/machinery/power/eotp/eotp
 		var/obj/item/_item = new oddity_reward(get_turf(src))
 		visible_message(SPAN_NOTICE("The [_item.name] appers out of bluespace near the [src]!"))
 
-	else if(type_release == STAT_BUFF)
-		var/random_stat = pick(ALL_STATS)
-		for(var/disciple in disciples)
-			if(ishuman(disciple))
-				var/mob/living/carbon/human/H = disciple
-				if(H.stats)
-					to_chat(H, SPAN_NOTICE("You feel the gaze of [src] pierce your mind, body, and soul. You are enlightened, and gain deeper knowledge in [random_stat]; however, you can already feel this newfound knowledge beginning to slip away.."))
-					H.stats.addTempStat(random_stat, stat_buff_power, 20 MINUTES, "Eye_of_the_Protector")
 
 	else if(type_release == MATERIAL_REWARD)
 		var/materials_reward = pick(materials)
@@ -201,5 +192,4 @@ var/global/obj/machinery/power/eotp/eotp
 #undef ALERT
 #undef INSPIRATION
 #undef ODDITY
-#undef STAT_BUFF
 #undef MATERIAL_REWARD
